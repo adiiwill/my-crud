@@ -1,5 +1,6 @@
 <?php
-include_once("./constants.php");
+include_once("functions/constants.php");
+include_once("functions/connection.php");
 
 #region Client Methods
 
@@ -139,13 +140,17 @@ function searchClientsByAttribute(mysqli $conn, string $attr): ?array
     }
 
     $result = mysqli_stmt_get_result($stmt);
+    $clients = [];
 
-    $client = mysqli_fetch_assoc($result);
+    // Loop through each row in the result set
+    while ($client = mysqli_fetch_assoc($result)) {
+        $clients[] = $client;
+    }
 
     mysqli_stmt_close($stmt);
     mysqli_free_result($result);
 
-    return $client;
+    return $clients;
 }
 
 #endregion
@@ -177,10 +182,9 @@ function updateClient(mysqli $conn, int $userId, array $updateData): bool
         throw new RuntimeException("Failed to prepare statement: " . mysqli_error($conn));
     }
 
-    $paramTypes = "";
+    $paramTypes = str_repeat("s", count($updateData)) . "i";
     $paramValues = [];
     foreach ($updateData as $value) {
-        $paramTypes .= "s";
         $paramValues[] = &$value;
     }
     $paramValues[] = &$userId;
@@ -195,6 +199,7 @@ function updateClient(mysqli $conn, int $userId, array $updateData): bool
 
     return true;
 }
+
 
 #endregion
 
@@ -220,7 +225,7 @@ function deleteClient(mysqli $conn, int $clientId): bool
         throw new RuntimeException("Failed to prepare statement: " . mysqli_error($conn));
     }
 
-    mysqli_stmt_bind_param($stmt, "i", $clientId); // Bind client ID parameter
+    mysqli_stmt_bind_param($stmt, "i", $clientId);
 
     if (!mysqli_stmt_execute($stmt)) {
         throw new RuntimeException("Failed to delete client: " . mysqli_stmt_error($stmt));
