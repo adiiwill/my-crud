@@ -200,7 +200,6 @@ function updateClient(mysqli $conn, int $userId, array $updateData): bool
     return true;
 }
 
-
 #endregion
 
 #region DELETE
