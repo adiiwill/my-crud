@@ -158,17 +158,17 @@ function searchClientsByAttribute(mysqli $conn, string $attr): ?array
 #region UPDATE
 
 /**
- * Updates a user in the database.
+ * Updates a client in the database.
  *
- * This function updates an existing user record based on a specified identifier and provided data.
+ * This function updates an existing client record based on a specified identifier and provided data.
  *
  * @param   mysqli              $conn An active connection to the MySQL database.
- * @param   int                 $userId The unique identifier of the user to update.
+ * @param   int                 $clientId The unique identifier of the client to update.
  * @param   array               $updateData An associative array containing the data to be updated (e.g., ['name' => 'New Name', 'email' => 'new@example.com']).
  * @return  bool                True on successful update, false on failure.
- * @throws  RuntimeException    If there is an error updating the user data in the database.
+ * @throws  RuntimeException    If there is an error updating the client data in the database.
  */
-function updateClient(mysqli $conn, int $userId, array $updateData): bool
+function updateClient(mysqli $conn, int $clientId, array $updateData): bool
 {
     $updateFields = [];
     foreach ($updateData as $field => $value) {
@@ -187,12 +187,12 @@ function updateClient(mysqli $conn, int $userId, array $updateData): bool
     foreach ($updateData as $value) {
         $paramValues[] = &$value;
     }
-    $paramValues[] = &$userId;
+    $paramValues[] = &$clientId;
 
     mysqli_stmt_bind_param($stmt, $paramTypes, ...$paramValues);
 
     if (!mysqli_stmt_execute($stmt)) {
-        throw new RuntimeException("Failed to update user: " . mysqli_stmt_error($stmt));
+        throw new RuntimeException("Failed to update client: " . mysqli_stmt_error($stmt));
     }
 
     mysqli_stmt_close($stmt);
